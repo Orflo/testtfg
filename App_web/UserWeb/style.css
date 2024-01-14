@@ -1,0 +1,98 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Courier New', Courier, monospace;
+    background-color:rgb(0, 0, 0);
+    color: white;
+}
+
+/* Cajas principales izquierda y derecha */
+.all-box {
+    display: flex;
+    padding: 20px;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+    .izq-side-box {
+        width: 50%;
+        border: 2px solid rgb(179, 179, 179);
+        border-radius: 10px;
+        margin: 0 15px;
+        box-sizing: border-box;
+        padding: 20px;
+        border-style: dotted;
+        display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 15px;
+    }
+    .der-side-box {
+        width: 50%;
+        border: 2px solid rgb(179, 179, 179);
+        border-radius: 10px;
+        margin: 0 15px;
+        box-sizing: border-box;
+        padding: 20px;
+    }
+        .button-styled {
+            padding: 20px;
+            border: 2px solid rgb(107, 107, 107);
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 20px;
+        }
+            .button-styled:hover {
+                border: 2px solid rgb(185, 185, 185);
+                background-color: rgb(170, 170, 170);
+            }
+
+/* MEDIDAS RESPONSIVE PARA TODOS DISPOSITIVOS */
+
+@media (max-width: 1267px) {
+    .izq-side-box {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .button-styled {
+        width: 100%;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 1112px) {
+    .all-box {
+        flex-direction: column;
+    }
+
+    .izq-side-box,
+    .der-side-box {
+        width: 100%;
+        margin: 0 0 15px;
+    }
+
+    .button-styled {
+        width: 80%;
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .izq-side-box {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .button-styled {
+        width: 100%;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .izq-side-box {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .button-styled {
+        width: 100%;
+        font-size: 18px;
+    }
+}

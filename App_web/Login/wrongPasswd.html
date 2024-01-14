@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mensaje de Error</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #ff0000;
+      font-family: 'Courier New', monospace;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 24px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .boton-volver {
+      background-color: #ff0000;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      display: none; /* Ocultar el botón inicialmente */
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Credenciales incorrectas.</h1>
+
+  <button class="boton-volver" onclick="volver()">Volver</button>
+
+  <script>
+    // Función para redirigir a la página anterior
+    function volver() {
+      window.location.href = 'http://localhost:3000';
+    }
+
+    // Mostrar el botón después de 2000 milisegundos (2 segundos)
+    setTimeout(function() {
+      document.querySelector('.boton-volver').style.display = 'block';
+    }, 2000);
+  </script>
+
+</body>
+</html>
