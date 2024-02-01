@@ -65,10 +65,10 @@ app.get('/ejecutar-script/:nombreOrdenador', function (req, res) {
 });
 
 // Conexión a base de datos:
-const bd_hashedPassword = '$2b$10$qqtgQEqwwtOUyBAzQiHHpe2Laf/rwJc4LC8qpItdVcduiBaysD2vm';
+const bd_hashedPassword = '12345';
 const mysqlConnection = mysql.createConnection({
-    host: '192.168.0.81',
-    user: 'admin',
+    host: 'localhost',
+    user: 'root',
     password: bd_hashedPassword,
     database: 'wol_app',
     multipleStatements: true
