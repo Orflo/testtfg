@@ -5,8 +5,9 @@ const mysql = require('mysql2')
 const bcrypt = require('bcrypt');
 const saltRounds = 10; // Número de rondas de salting
 const { exec } = require('child_process');
+const { config } = require('dotenv')
+config();
 
-require("dotenv").config();
 //CONFIGURACIÓN DEL PUERTO DE LA APP
 const PORT = process.env.NODE_DOCKER_PORT || 3000;
 app.listen(PORT, () => {
@@ -67,12 +68,11 @@ app.get('/ejecutar-script/:nombreOrdenador', function (req, res) {
 });
 
 // Conexión a base de datos:
-const dbConfig = require(path.join(__dirname, "config", "db.config.js"));
 const mysqlConnection = mysql.createConnection({
-    host: dbConfig.HOST,
-    user: dbConfig.USER,
-    password: dbConfig.PASSWORD,
-    database: dbConfig.NAME,
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
     multipleStatements: true
 });
 
