@@ -6,17 +6,19 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10; // Número de rondas de salting
 const { exec } = require('child_process');
 
+require("dotenv").config();
+//CONFIGURACIÓN DEL PUERTO DE LA APP
+const PORT = process.env.NODE_DOCKER_PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Servidor iniciado en el puerto ${PORT}`);
+});
 
 // SERVIDOR CON EXPRESS
 const express = require('express');
-const PORT = 3000;
 var app = express();
     app.use (bodyParser.json());
     app.use (bodyParser.urlencoded({extended: true}));
     app.use(express.static(path.join(__dirname, 'App_web', 'Login')));
-app.listen(PORT, () => {
-    console.log(`Servidor iniciado en el puerto ${PORT}`);
-});
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'App_web','Login', 'form.html'));
@@ -65,12 +67,12 @@ app.get('/ejecutar-script/:nombreOrdenador', function (req, res) {
 });
 
 // Conexión a base de datos:
-const bd_hashedPassword = '12345';
+const dbConfig = require(path.join(__dirname, "config", "db.config.js"));
 const mysqlConnection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: bd_hashedPassword,
-    database: 'wol_app',
+    host: dbConfig.HOST,
+    user: dbConfig.USER,
+    password: dbConfig.PASSWORD,
+    database: dbConfig.NAME,
     multipleStatements: true
 });
 
