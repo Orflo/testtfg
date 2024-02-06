@@ -1,14 +1,15 @@
 const express = require('express');
-const { createPool } = require('mysql2/promise');
+const mysql = require('mysql2');
 const { config } = require('dotenv');
 
 config();
 const app = express();
-const mysqlConnection = createPool({
+const mysqlConnection = mysql.createConnection({
     host: process.env.MYSQLDB_HOST,
     user: process.env.MYSQLDB_USER,
     password: process.env.MYSQLDB_ROOT_PASSWORD,
     database: process.env.MYSQLDB_DATABASE,
+    port: process.env.MYSQLDB_DOCKER_PORT
 });
 
 const PORT = process.env.NODE_DOCKER_PORT
@@ -20,7 +21,7 @@ app.get('/', (req,res) => {
     res.send('Hello World!')
 });
 
-app.get('/ping', async (req, res) => {
-    const result = await mysqlConnection.query('SELECT NOW()')
-    res.json(result[0])
-});
+mysqlConnection.connect(function(err) {
+    if (err) throw err;
+    console.log("Connected!");
+  });
