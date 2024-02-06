@@ -4,7 +4,7 @@ const { config } = require('dotenv');
 
 config();
 const app = express();
-const mysqlConnection = createPool = ({
+const mysqlConnection = createPool({
     host: process.env.MYSQLDB_HOST,
     user: process.env.MYSQLDB_USER,
     password: process.env.MYSQLDB_ROOT_PASSWORD,
