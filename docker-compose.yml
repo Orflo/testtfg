@@ -15,7 +15,7 @@ services:
   app:
     depends_on:
       mysqldb:
-        condition: service_completed_successfully
+        condition: service_healthy
     links:
       - mysqldb
     build: .
