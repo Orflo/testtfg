@@ -21,7 +21,9 @@ app.get('/', (req,res) => {
     res.send('Hello World!')
 });
 
-mysqlConnection.connect(function(err) {
-    if (err) throw err;
-    console.log("Connected!");
-  });
+mysqlConnection.connect((err) => {
+    if (!err)
+        console.log('Conexión con la base de datos correcta...');
+    else
+        console.log('¡Conexión fallida!' + JSON.stringify(err, undefined, 2));
+});
