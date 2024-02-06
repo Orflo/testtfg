@@ -11,13 +11,16 @@ services:
       - MYSQL_DATABASE=$MYSQLDB_DATABASE
     ports:
       - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
+    logging:
+      driver: none
 
   app:
-    build: . 
     depends_on:
       - mysqldb
     links:
       - mysqldb
+    build: .
+    restart: unless-stopped 
     ports:
       - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
     stdin_open: true
