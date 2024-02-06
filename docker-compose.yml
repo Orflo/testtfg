@@ -11,8 +11,6 @@ services:
       - MYSQL_DATABASE=$MYSQLDB_DATABASE
     ports:
       - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
-    logging:
-      driver: none
 
   app:
     depends_on:
