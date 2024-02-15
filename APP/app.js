@@ -98,44 +98,52 @@ app.post('/iniciarsesion', (req, res) => {
     const usuario = req.body.usuario;
     const password = req.body.password;
 
-    const sql = 'SELECT * FROM credenciales WHERE usuario = ?';
-    connection.query(sql, [usuario], (err, rows) => {
-        connection.release();
-        if (!err) {
-            if (rows.length > 0) {
-                const hashedPasswordFromDB = rows[0].hash;
-                const userRole = rows[0].role; // Supongamos que hay un campo 'role' en la tabla de credenciales
+    mysqlPool.getConnection((err, connection) => {
+        if (err) {
+            console.log('Error al obtener la conexión de la pool: ' + err);
+            res.status(500).send("Error en el inicio de sesión");
+            return;
+        }
 
-                if (usuario === 'admin') {
-                    // Lógica para el inicio de sesión del administrador
-                    res.redirect('/App_Web/AdminWeb/main.html');
-                } else {
-                    // Verificación de la contraseña para roles diferentes a 'admin'
-                    bcrypt.compare(password, hashedPasswordFromDB, (compareErr, result) => {
-                        if (compareErr) {
-                            console.log("Error al comparar contraseñas: " + compareErr);
-                            res.status(500).send("Error en el inicio de sesión");
-                        } else {
-                            if (result) {
-                                // Acciones para otros roles o cualquier lógica adicional
-                                res.sendFile(path.join(__dirname, 'App_web', 'UserWeb', 'index.html'));
-                                app.use(express.static(path.join(__dirname, 'App_web', 'UserWeb')));
-                                const filePath = path.join(__dirname, 'UserWeb', 'wol.ps1');
+        const sql = 'SELECT * FROM credenciales WHERE usuario = ?';
+        connection.query(sql, [usuario], (err, rows) => {
+            connection.release();
+            if (!err) {
+                if (rows.length > 0) {
+                    const hashedPasswordFromDB = rows[0].hash;
+                    const userRole = rows[0].role; // Supongamos que hay un campo 'role' en la tabla de credenciales
+
+                    if (usuario === 'admin') {
+                        // Lógica para el inicio de sesión del administrador
+                        res.redirect('/App_Web/AdminWeb/main.html');
+                    } else {
+                        // Verificación de la contraseña para roles diferentes a 'admin'
+                        bcrypt.compare(password, hashedPasswordFromDB, (compareErr, result) => {
+                            if (compareErr) {
+                                console.log("Error al comparar contraseñas: " + compareErr);
+                                res.status(500).send("Error en el inicio de sesión");
                             } else {
-                                console.log("Contraseña incorrecta");
-                                res.status(401).send("No se ha podido autenticar el usuario - Contraseña incorrecta");
+                                if (result) {
+                                    // Acciones para otros roles o cualquier lógica adicional
+                                    res.sendFile(path.join(__dirname, 'App_web', 'UserWeb', 'index.html'));
+                                    app.use(express.static(path.join(__dirname, 'App_web', 'UserWeb')));
+                                    const filePath = path.join(__dirname, 'UserWeb', 'wol.ps1');
+                                } else {
+                                    console.log("Contraseña incorrecta");
+                                    res.status(401).send("No se ha podido autenticar el usuario - Contraseña incorrecta");
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
+                } else {
+                    console.log("Usuario no encontrado");
+                    res.status(401).send("No se ha podido autenticar el usuario - Usuario no encontrado");
                 }
             } else {
-                console.log("Usuario no encontrado");
-                res.status(401).send("No se ha podido autenticar el usuario - Usuario no encontrado");
+                console.log("Error en el inicio de sesión: " + err);
+                res.status(500).send("Error en el inicio de sesión");
             }
-        } else {
-            console.log("Error en el inicio de sesión: " + err);
-            res.status(500).send("Error en el inicio de sesión");
-        }
+        });
     });
 });
 
@@ -148,24 +156,32 @@ app.post('/cambiarcontrasena', (req, res) => {
     const usuario = req.body.usuario;
     const nuevaContraseña = req.body.nuevaContraseña;
 
-    bcrypt.hash(nuevaContraseña, saltRounds, (hashErr, nuevoHash) => {
-        if (hashErr) {
-            console.log("Error al hashear la nueva contraseña: " + hashErr);
+    mysqlPool.getConnection((err, connection) => {
+        if (err) {
+            console.log('Error al obtener la conexión de la pool: ' + err);
             res.status(500).send("Error al cambiar la contraseña");
-        } else {
-            const updateSql = 'UPDATE credenciales SET hash = ? WHERE usuario = ?';
-            connection.query(updateSql, [nuevoHash, usuario], (updateErr) => {
-                connection.release();
-                if (updateErr) {
-                    console.log("Error al actualizar la contraseña: " + updateErr);
-                    res.status(500).send("Error al cambiar la contraseña");
-                } else {
-                    console.log("Contraseña cambiada exitosamente");
-                    res.status(200).send("Contraseña cambiada exitosamente");
-                    res.sendFile(path.join(__dirname + '/App_web','/Login','/form.html'))
-                }
-            });
+            return;
         }
+
+        bcrypt.hash(nuevaContraseña, saltRounds, (hashErr, nuevoHash) => {
+            if (hashErr) {
+                console.log("Error al hashear la nueva contraseña: " + hashErr);
+                res.status(500).send("Error al cambiar la contraseña");
+            } else {
+                const updateSql = 'UPDATE credenciales SET hash = ? WHERE usuario = ?';
+                connection.query(updateSql, [nuevoHash, usuario], (updateErr) => {
+                    connection.release();
+                    if (updateErr) {
+                        console.log("Error al actualizar la contraseña: " + updateErr);
+                        res.status(500).send("Error al cambiar la contraseña");
+                    } else {
+                        console.log("Contraseña cambiada exitosamente");
+                        res.status(200).send("Contraseña cambiada exitosamente");
+                        res.sendFile(path.join(__dirname + '/App_web','/Login','/form.html'))
+                    }
+                });
+            }
+        });
     });
 });
 
