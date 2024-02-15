@@ -1,17 +1,31 @@
 {
-  "name": "nodeapp",
+  "name": "app_wol",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Se crea la estructura inicial del proyecto y se empieza a configurar los ficheros server.js y app.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node src/index.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SergioNetCo/APP_WOL.git"
+  },
+  "author": "LucasAntonelli&SergioF",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SergioNetCo/APP_WOL/issues"
+  },
+  "homepage": "https://github.com/SergioNetCo/APP_WOL#readme",
   "dependencies": {
-    "dotenv": "^16.4.1",
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
+    "child_process": "^1.0.2",
     "express": "^4.18.2",
-    "mysql2": "^3.9.1"
+    "mysql": "^2.18.1",
+    "mysql2": "^3.7.1",
+    "path": "^0.12.7",
+    "wake_on_lan": "^1.0.0",
+    "wol": "^1.0.7",
+    "dotenv": "^16.4.1"
   }
 }
