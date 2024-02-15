@@ -10,4 +10,4 @@ CREATE TABLE IF NOT EXISTS credenciales (
 );
 
 -- Insertar un usuario de prueba
-INSERT INTO credenciales (usuario, hash, rol) VALUES ('test_user', '12345', 'admin');
+INSERT INTO credenciales (usuario, hash, rol) VALUES ('admin', '12345', 'admin');
