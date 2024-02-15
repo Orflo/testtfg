@@ -1,0 +1,262 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: rgb(0, 0, 0);
+    color: white;
+}
+
+/* Cajas principales izquierda y derecha */
+.all-box {
+    display: flex;
+    padding: 20px;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+    .izq-side-box {
+        width: 50%;
+        border: 2px solid rgb(179, 179, 179);
+        border-radius: 10px;
+        margin: 0 15px;
+        box-sizing: border-box;
+        padding: 20px;
+        border-style: dotted;
+        display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 15px;
+    }
+    .der-side-box {
+        width: 50%;
+        border: 2px solid rgb(179, 179, 179);
+        border-radius: 10px;
+        margin: 0 15px;
+        box-sizing: border-box;
+        padding: 20px;
+    }
+        /* BOTÓN DE CAMBIO DE COLORES DE LA WEB */
+        #toggleButton {
+            font-family: 'Courier New', Courier, monospace;
+            padding: 10px;
+            background-color: #ffffff;
+            color: #000000;
+            border: 2px solid #797979;
+            border-radius: 5px;
+            cursor: pointer;
+            float: right;
+        }
+
+        #toggleButton:hover {
+            background-color: #2980b9;
+            border: 2px solid #2980b9;
+            color: #000000;
+        }
+        .button-styled {
+            padding: 20px;
+            border: 2px solid rgb(107, 107, 107);
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 20px;
+            cursor: pointer;
+        }
+            .button-styled:hover {
+                border: 2px solid rgb(119, 119, 119);
+                background-color: rgb(94, 94, 94);
+            }
+            .button-styled:focus {
+                border: 2px solid rgb(185, 185, 185);
+                background-color: rgb(59, 59, 59);
+                transition: 0.2s;
+            }
+
+/* ESTILOS BLANCOS DE LA WEB */
+.white-theme {
+    background-color: white; 
+    color: #000000; 
+}
+
+.white-theme #toggleButton {
+    background-color: #2980b9; 
+    border: 2px solid #2980b9; 
+    color: #ffffff; 
+}
+
+.white-theme #toggleButton:hover {
+    background-color: #2980b9; 
+    border: 2px solid #2980b9; 
+}
+    /* BOX DERECHA EN MODO BLANCO */
+    .white-theme .der-side-box {
+        width: 50%;
+        border: 2px solid rgb(0, 0, 0);
+        border-radius: 10px;
+        margin: 0 15px;
+        box-sizing: border-box;
+        padding: 20px;
+    }
+    /* BOX DERECHA EN MODO BLANCO */
+    .white-theme .izq-side-box {
+        width: 50%;
+        border: 2px solid rgb(0, 0, 0);
+        border-radius: 10px;
+        border-style: dashed;
+        margin: 0 15px;
+        box-sizing: border-box;
+        padding: 20px;
+    }
+    .white-theme .button-styled {
+        padding: 20px;
+        border: 2px solid rgb(0, 0, 0);
+        border-radius: 5px;
+        background-color: #114b72;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 20px;
+    }
+        .white-theme .button-styled:hover {
+            border: 2px solid rgb(0, 30, 48);
+            background-color: #082f49;
+        }
+        .white-theme .button-styled:focus {
+            border: 2px solid rgb(8, 8, 37);
+            background-color: rgb(12, 64, 177);
+            transition: 0.2s;
+        }
+    .white-theme #toggleButton {
+        font-family: 'Courier New', Courier, monospace;
+        padding: 10px;
+        background-color: #3498db;
+        color: black;
+        border: 2px solid #2980b9;
+        border-radius: 5px;
+        cursor: pointer;
+        float: right;
+    }
+    .white-theme #toggleButton:hover {
+        background-color: rgb(0, 0, 0);
+        border: 2px solid #797979;
+        color: white
+    }
+
+/* ANIMACIÓN PANTALLA DE CARGA INICIAL */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(126, 126, 126);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1; 
+    transition: opacity 2s ease-in-out; 
+}
+
+/* Estilos adicionales */
+.loading-text {
+    font-size: 24px;
+}
+
+/* LISTADO DE TAREAS */
+.task-app {
+    max-width: 600px;
+}
+
+#newTaskInput {
+    width: 70%;
+    padding: 10px;
+    font-size: 16px;
+}
+
+#addTaskButton {
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#taskList {
+    list-style: none;
+    padding: 0;
+}
+
+.task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: right;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 8px;
+    margin-bottom: 8px;
+}
+
+.task-item.completed {
+    background-color: #d3ffd3; 
+    text-decoration: line-through;
+    color: black;
+    border: 1px solid rgb(21, 255, 0);
+}
+    .white-theme .task-item.completed {
+        background-color: #75ff75; 
+        text-decoration: line-through;
+        color: black;
+        border: 1px solid rgb(21, 255, 0);
+    }
+
+.complete-button, .delete-button {
+    cursor: pointer;
+}
+
+/* MEDIDAS RESPONSIVE PARA TODOS DISPOSITIVOS */
+
+@media (max-width: 1267px) {
+    .izq-side-box {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .button-styled {
+        width: 100%;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 1112px) {
+    .all-box {
+        flex-direction: column;
+    }
+
+    .izq-side-box,
+    .der-side-box {
+        width: 100%;
+        margin: 0 0 15px;
+    }
+
+    .button-styled {
+        width: 80%;
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .izq-side-box {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .button-styled {
+        width: 100%;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .izq-side-box {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .button-styled {
+        width: 100%;
+        font-size: 18px;
+    }
+    
+    .der-side-box {
+        padding: 10px;
+    }
+}
