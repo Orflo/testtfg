@@ -29,7 +29,6 @@ function connectToDatabase() {
         }
     });
 }
-connectToDatabase();
 
 const app = express();
     app.use (bodyParser.json());
@@ -207,3 +206,5 @@ const hashPassword = (hash) => {
         });
     });
 };
+
+connectToDatabase();
