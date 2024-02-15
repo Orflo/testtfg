@@ -9,6 +9,7 @@ const { exec } = require('child_process');
 const { config } = require('dotenv');
 
 //Conexión a la base de datos
+let mysqlConnection;
 config();
 function connectToDatabase() {
     const mysqlConnection = mysql.createConnection({
