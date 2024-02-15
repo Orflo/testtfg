@@ -7,10 +7,9 @@ const saltRounds = 10; // Número de rondas de salting
 const express = require('express');
 const { exec } = require('child_process');
 const { config } = require('dotenv');
-
+config();
 //Conexión a la base de datos
 let mysqlConnection;
-config();
 function connectToDatabase() {
     const mysqlConnection = mysql.createConnection({
         host: process.env.MYSQLDB_HOST,
