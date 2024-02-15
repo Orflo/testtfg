@@ -29,6 +29,7 @@ function connectToDatabase() {
         }
     });
 }
+connectToDatabase();
 
 const app = express();
     app.use (bodyParser.json());
@@ -42,7 +43,6 @@ function startServer() {
         console.log(`Servidor iniciado en el puerto ${PORT}`);
     });
 }
-connectToDatabase();
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'App_web','Login', 'form.html'));
