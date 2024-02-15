@@ -10,7 +10,7 @@ const { config } = require('dotenv');
 config();
 
 //Conexión a la base de datos
-const mysqlConnection = mysql.createConnection({
+const mysqlPool = mysql.createPool({
     host: process.env.MYSQLDB_HOST,
     user: process.env.MYSQLDB_USER,
     password: process.env.MYSQLDB_PASSWORD,
@@ -18,13 +18,14 @@ const mysqlConnection = mysql.createConnection({
     port: process.env.MYSQLDB_DOCKER_PORT
 });
 function connectToDatabase() {
-    mysqlConnection.connect((err) => {
+    mysqlPool.getConnection((err, connection) => {
         if (err) {
             console.log('¡Conexión fallida!' + JSON.stringify(err, undefined, 2));
             setTimeout(connectToDatabase, 5000);
         } else {
             console.log('Conexión con la base de datos establecida.');
             startServer();
+            connection.release();
         }
     });
 }
@@ -98,7 +99,8 @@ app.post('/iniciarsesion', (req, res) => {
     const password = req.body.password;
 
     const sql = 'SELECT * FROM credenciales WHERE usuario = ?';
-    mysqlConnection.query(sql, [usuario], (err, rows) => {
+    connection.query(sql, [usuario], (err, rows) => {
+        connection.release();
         if (!err) {
             if (rows.length > 0) {
                 const hashedPasswordFromDB = rows[0].hash;
@@ -152,7 +154,8 @@ app.post('/cambiarcontrasena', (req, res) => {
             res.status(500).send("Error al cambiar la contraseña");
         } else {
             const updateSql = 'UPDATE credenciales SET hash = ? WHERE usuario = ?';
-            mysqlConnection.query(updateSql, [nuevoHash, usuario], (updateErr) => {
+            connection.query(updateSql, [nuevoHash, usuario], (updateErr) => {
+                connection.release();
                 if (updateErr) {
                     console.log("Error al actualizar la contraseña: " + updateErr);
                     res.status(500).send("Error al cambiar la contraseña");
@@ -179,7 +182,8 @@ app.post('/crearusuario', async (req, res) => {
     const hashedPassword = await hashPassword(contraseña);
 
     const sql = 'INSERT INTO credenciales (usuario, hash) VALUES (?, ?)';
-    mysqlConnection.query(sql, [usuario, hashedPassword], (err, result) => {
+    connection.query(sql, [usuario, hashedPassword], (err, result) => {
+        connection.release();
         if (!err) {
             console.log("Usuario creado con éxito");
             res.send("Usuario creado con éxito");
