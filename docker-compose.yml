@@ -11,15 +11,10 @@ services:
       - MYSQL_DATABASE=$MYSQLDB_DATABASE
     ports:
       - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
-      timeout: 20s
-      retries: 10
 
   app:
     depends_on:
-      mysqldb:
-        condition: service_healthy
+      - mysqldb
     links:
       - mysqldb
     build: .

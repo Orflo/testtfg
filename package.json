@@ -4,7 +4,7 @@
   "description": "Se crea la estructura inicial del proyecto y se empieza a configurar los ficheros server.js y app.js",
   "main": "app.js",
   "scripts": {
-    "start": "npm APP/app.js"
+    "start": "node APP/app.js"
   },
   "repository": {
     "type": "git",
