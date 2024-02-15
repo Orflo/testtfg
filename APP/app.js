@@ -10,7 +10,6 @@ const { config } = require('dotenv');
 
 //Conexión a la base de datos
 config();
-const app = express();
 function connectToDatabase() {
     const mysqlConnection = mysql.createConnection({
         host: process.env.MYSQLDB_HOST,
@@ -30,22 +29,23 @@ function connectToDatabase() {
     });
 }
 
-// SERVIDOR CON EXPRESS
-function startServer() {
-    const PORT = process.env.NODE_DOCKER_PORT
+const app = express();
     app.use (bodyParser.json());
     app.use (bodyParser.urlencoded({extended: true}));
     app.use(express.static(path.join(__dirname, 'App_web', 'Login')));
+
+// SERVIDOR CON EXPRESS
+function startServer() {
+    const PORT = process.env.NODE_DOCKER_PORT
     app.listen(PORT, () => {
         console.log(`Servidor iniciado en el puerto ${PORT}`);
     });
-
-    app.get('/', (req, res) => {
-        res.sendFile(path.join(__dirname, 'App_web','Login', 'form.html'));
-    });
 }
-
 connectToDatabase();
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'App_web','Login', 'form.html'));
+});
 
 // EJECUTAR SCRIPT DE POWERSHELL PARA WAKE ON LAN
 // Ruta para ejecutar el script PowerShell
