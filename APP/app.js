@@ -115,7 +115,7 @@ app.post('/iniciarsesion', (req, res) => {
 
                     if (usuario === 'admin') {
                         // Lógica para el inicio de sesión del administrador
-                        res.redirect('/App_Web/AdminWeb/main.html');
+                        res.redirect('/App_web/AdminWeb/main.html');
                     } else {
                         // Verificación de la contraseña para roles diferentes a 'admin'
                         bcrypt.compare(password, hashedPasswordFromDB, (compareErr, result) => {
