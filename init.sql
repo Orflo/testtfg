@@ -4,9 +4,10 @@ USE wol_app;
 
 -- Crear la tabla "credenciales"
 CREATE TABLE IF NOT EXISTS credenciales (
-    usuario VARCHAR(20) PRIMARY KEY,
-    hash VARCHAR(255),
-    rol VARCHAR(10)
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    usuario VARCHAR(20) NOT NULL,
+    hash VARCHAR(255) NOT NULL,
+    rol VARCHAR(10) NOT NULL
 );
 
 -- Insertar un usuario de prueba

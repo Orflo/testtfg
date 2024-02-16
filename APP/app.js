@@ -197,7 +197,7 @@ app.post('/crearusuario', async (req, res) => {
     mysqlPool.getConnection(async (err, connection) => {
         if (err) {
             console.log('Error al obtener la conexión de la pool: ' + err);
-            res.status(500).send("Error al cambiar la contraseña");
+            res.status(500).send("Error al crear usuario");
             return;
         }
 
