@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS credenciales (
     id INT PRIMARY KEY AUTO_INCREMENT,
     usuario VARCHAR(20) NOT NULL,
     hash VARCHAR(255) NOT NULL,
-    rol VARCHAR(10) NOT NULL
+    rol VARCHAR(10)
 );
 
 -- Insertar un usuario de prueba
