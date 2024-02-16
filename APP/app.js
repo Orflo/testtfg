@@ -194,31 +194,39 @@ app.post('/crearusuario', async (req, res) => {
     const usuario = req.body.nombre;
     const contraseña = req.body.password;
 
-    // Hasheo de la contraseña antes de almacenarla
-    const hashedPassword = await hashPassword(contraseña);
-
-    const sql = 'INSERT INTO credenciales (usuario, hash) VALUES (?, ?)';
-    connection.query(sql, [usuario, hashedPassword], (err, result) => {
-        connection.release();
-        if (!err) {
-            console.log("Usuario creado con éxito");
-            res.send("Usuario creado con éxito");
-        } else {
-            console.log("Error al crear usuario: " + err);
-            res.status(500).send("Error al crear usuario");
+    mysqlPool.getConnection(async (err, connection) => {
+        if (err) {
+            console.log('Error al obtener la conexión de la pool: ' + err);
+            res.status(500).send("Error al cambiar la contraseña");
+            return;
         }
-    });
-});
 
-const hashPassword = (hash) => {
-    return new Promise((resolve, reject) => {
-        bcrypt.hash(hash, saltRounds, (err, hash) => {
-            if (err) {
-                console.log("Error al hashear la contraseña: " + err);
-                reject(err);
+        // Hasheo de la contraseña antes de almacenarla
+        const hashedPassword = await hashPassword(contraseña);
+
+        const sql = 'INSERT INTO credenciales (usuario, hash) VALUES (?, ?)';
+        connection.query(sql, [usuario, hashedPassword], (err, result) => {
+            connection.release();
+            if (!err) {
+                console.log("Usuario creado con éxito");
+                res.send("Usuario creado con éxito");
             } else {
-                resolve(hash);
+                console.log("Error al crear usuario: " + err);
+                res.status(500).send("Error al crear usuario");
             }
         });
     });
-};
+
+    const hashPassword = (hash) => {
+        return new Promise((resolve, reject) => {
+            bcrypt.hash(hash, saltRounds, (err, hash) => {
+                if (err) {
+                    console.log("Error al hashear la contraseña: " + err);
+                    reject(err);
+                } else {
+                    resolve(hash);
+                }
+            });
+        });
+    };
+});
