@@ -5,7 +5,7 @@ pipeline {
             steps {
                 script {
                     // Build and deploy using Docker Compose
-                    sh 'docker-compose up -d'
+                    sh 'docker compose up -d'
                 }
             }
         }
