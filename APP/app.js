@@ -70,7 +70,7 @@ app.get('/ejecutar-script/:nombreOrdenador', function (req, res) {
 const mysqlConnection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'root',
+    password: '',
     database: 'wol_app',
     multipleStatements: true
 });
