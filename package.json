@@ -4,7 +4,7 @@
   "description": "Se crea la estructura inicial del proyecto y se empieza a configurar los ficheros server.js y app.js",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node APP/app.js"
   },
   "repository": {
     "type": "git",
