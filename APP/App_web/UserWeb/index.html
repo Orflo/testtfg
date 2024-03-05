@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Página de usuario</title>
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="style_user.css">
     <script>
         document.addEventListener("DOMContentLoaded", function () {
         const botones = document.querySelectorAll('.button-styled');
@@ -94,6 +94,39 @@
     }
 });
     
+        document.addEventListener("DOMContentLoaded", function () {
+            // Puedes hacer una solicitud fetch para obtener la información de los equipos asignados
+            // y luego crear dinámicamente los botones en la sección izq-side-box
+            // Ejemplo: fetch('/equiposasignados')
+            //           .then(response => response.json())
+            //           .then(data => {
+            //               // Crear botones según la información recibida
+            //           });
+
+            // Ejemplo de botón estático
+            const buttonIgnacio = document.createElement('button');
+            buttonIgnacio.type = 'button';
+            buttonIgnacio.className = 'button-styled';
+            buttonIgnacio.innerText = 'Mi ordenador: \n192.168.0.11';
+
+            // Agrega un evento al botón para enviar la señal WOL
+            buttonIgnacio.addEventListener('click', () => {
+                fetch('/wake?ip=192.168.0.11')
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Señal WOL enviada correctamente a 192.168.0.11');
+                        } else {
+                            console.log('Error al enviar la señal WOL a 192.168.0.11');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+
+            // Agrega el botón a la sección izq-side-box
+            document.querySelector('.izq-side-box').appendChild(buttonIgnacio);
+        });
 
     </script>
 </head>
@@ -103,25 +136,11 @@
     </div>
     <div class="all-box">
         <div class="izq-side-box">
-            <button type="button" class="button-styled" id="wakeButtonIgnacio">Ordenador de Ignacio  <br><br> 192.168.0.11</button>
-            <button type="button" class="button-styled" id="wakeButtonJuan">Ordenador de Juan  <br><br> 192.168.0.2</button>
-            <button type="button" class="button-styled" id="wakeButtonMaria">Ordenador de Maria  <br><br> 192.168.0.3</button>
-            <button type="button" class="button-styled" id="wakeButtonPedro">Ordenador de Pedro  <br><br> 192.168.0.4</button>
-            <button type="button" class="button-styled" id="wakeButtonAna">Ordenador de Ana  <br><br> 192.168.0.5</button>
-            <button type="button" class="button-styled" id="wakeButtonCarlos">Ordenador de Carlos  <br><br> 192.168.0.6</button>
-            <button type="button" class="button-styled" id="wakeButtonLaura">Ordenador de Laura  <br><br> 192.168.0.7</button>
-            <button type="button" class="button-styled" id="wakeButtonDiego">Ordenador de Diego  <br><br> 192.168.0.8</button>
-            <button type="button" class="button-styled" id="wakeButtonMarta">Ordenador de Marta  <br><br> 192.168.0.9</button>
-            <button type="button" class="button-styled" id="wakeButtonSofia">Ordenador de Sofia  <br><br> 192.168.0.10</button>
-            <button type="button" class="button-styled" id="wakeButtonPablo">Ordenador de Pablo  <br><br> 192.168.0.11</button>
-            <button type="button" class="button-styled" id="wakeButtonIsabel">Ordenador de Isabel  <br><br> 192.168.0.12</button>
-            <button type="button" class="button-styled" id="wakeButtonLuis">Ordenador de Luis  <br><br> 192.168.0.13</button>
-            <button type="button" class="button-styled" id="wakeButtonElena">Ordenador de Elena  <br><br> 192.168.0.14</button>
-            <button type="button" class="button-styled" id="wakeButtonSergio">Ordenador de Sergio  <br><br> 192.168.0.15</button>
+            <!-- Aquí se agregarán dinámicamente las IPs NO PONER NADA -->
         </div>
         <div class="der-side-box">
             <button id="toggleButton">Cambiar Tema</button>
-            <h1>¡Bienvenido Sergio!</h1>
+            <h1>¡Bienvenido!</h1>
             <p>Número de teléfono: 608 73 78 25</p>
             <p>Horario disponible: Lunes a Viernes, 9:00 AM - 5:00 PM</p>
             <p>Donde vives: Madrid, España.</p>

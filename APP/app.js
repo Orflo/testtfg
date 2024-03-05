@@ -4,48 +4,24 @@ const bodyParser = require('body-parser')
 const mysql = require('mysql2')
 const bcrypt = require('bcrypt');
 const saltRounds = 10; // Número de rondas de salting
-const express = require('express');
 const { exec } = require('child_process');
-const { config } = require('dotenv');
-config();
 
-//Conexión a la base de datos
-const mysqlPool = mysql.createPool({
-    host: process.env.MYSQLDB_HOST,
-    user: process.env.MYSQLDB_USER,
-    password: process.env.MYSQLDB_PASSWORD,
-    database: process.env.MYSQLDB_DATABASE,
-    port: process.env.MYSQLDB_DOCKER_PORT
-});
-function connectToDatabase() {
-    mysqlPool.getConnection((err, connection) => {
-        if (err) {
-            console.log('¡Conexión fallida!' + JSON.stringify(err, undefined, 2));
-            setTimeout(connectToDatabase, 5000);
-        } else {
-            console.log('Conexión con la base de datos establecida.');
-            startServer();
-            connection.release();
-        }
-    });
-}
-
-const app = express();
-    app.use (bodyParser.json());
-    app.use (bodyParser.urlencoded({extended: true}));
-    app.use(express.static(path.join(__dirname, 'App_web', 'Login')));
 
 // SERVIDOR CON EXPRESS
-function startServer() {
-    const PORT = process.env.NODE_DOCKER_PORT
-    app.listen(PORT, () => {
-        console.log(`Servidor iniciado en el puerto ${PORT}`)
-    });
-}
-connectToDatabase();
+const express = require('express');
+const PORT = 3000;
+var app = express();
+    app.use (bodyParser.json());
+    app.use (bodyParser.urlencoded({extended: true}));
+app.listen(PORT, () => {
+    console.log(`Servidor iniciado en el puerto ${PORT}`);
+});
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'App_web','Login', 'form.html'));
+});
+app.get('/administracion', (req, res) => {
+    res.sendFile(path.join(__dirname, 'App_web','AdminWeb', 'main.html'));
 });
 
 // EJECUTAR SCRIPT DE POWERSHELL PARA WAKE ON LAN
@@ -90,60 +66,83 @@ app.get('/ejecutar-script/:nombreOrdenador', function (req, res) {
     });
 });
 
+// Conexión a base de datos:
+const mysqlConnection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'wol_app',
+    multipleStatements: true
+});
+
+mysqlConnection.connect((err) => {
+    if (!err)
+        console.log('Conexión con la base de datos correcta...');
+    else
+        console.log('¡Conexión fallida!' + JSON.stringify(err, undefined, 2));
+});
+
+const port = process.env.PORT || 8181;
+
 // Configuración para servir archivos estáticos desde el directorio actual
-app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, 'App_web', 'AdminWeb')));
+
+// Hash de contraseñas para cifrado interno de la bd
+const hashPassword = (hash) => {
+    return new Promise((resolve, reject) => {
+        bcrypt.hash(hash, saltRounds, (err, hash) => {
+            if (err) {
+                console.log("Error al hashear la contraseña: " + err);
+                reject(err);
+            } else {
+                resolve(hash);
+            }
+        });
+    });
+};
 
 //  Inicio de sesión:
 app.post('/iniciarsesion', (req, res) => {
     const usuario = req.body.usuario;
     const password = req.body.password;
 
-    mysqlPool.getConnection((err, connection) => {
-        if (err) {
-            console.log('Error al obtener la conexión de la pool: ' + err);
-            res.status(500).send("Error en el inicio de sesión");
-            return;
-        }
+    const sql = 'SELECT * FROM credenciales WHERE usuario = ?';
+    mysqlConnection.query(sql, [usuario], (err, rows) => {
+        if (!err) {
+            if (rows.length > 0) {
+                const hashedPasswordFromDB = rows[0].hash;
+                const userRole = rows[0].rol; // Supongamos que hay un campo 'role' en la tabla de credenciales
 
-        const sql = 'SELECT * FROM credenciales WHERE usuario = ?';
-        connection.query(sql, [usuario], (err, rows) => {
-            connection.release();
-            if (!err) {
-                if (rows.length > 0) {
-                    const hashedPasswordFromDB = rows[0].hash;
-                    const userRole = rows[0].role; // Supongamos que hay un campo 'role' en la tabla de credenciales
-
-                    if (usuario === 'admin') {
-                        // Lógica para el inicio de sesión del administrador
-                        res.redirect('/App_web/AdminWeb/main.html');
-                    } else {
-                        // Verificación de la contraseña para roles diferentes a 'admin'
-                        bcrypt.compare(password, hashedPasswordFromDB, (compareErr, result) => {
-                            if (compareErr) {
-                                console.log("Error al comparar contraseñas: " + compareErr);
-                                res.status(500).send("Error en el inicio de sesión");
-                            } else {
-                                if (result) {
-                                    // Acciones para otros roles o cualquier lógica adicional
-                                    res.sendFile(path.join(__dirname, 'App_web', 'UserWeb', 'index.html'));
-                                    app.use(express.static(path.join(__dirname, 'App_web', 'UserWeb')));
-                                    const filePath = path.join(__dirname, 'UserWeb', 'wol.ps1');
-                                } else {
-                                    console.log("Contraseña incorrecta");
-                                    res.status(401).send("No se ha podido autenticar el usuario - Contraseña incorrecta");
-                                }
-                            }
-                        });
-                    }
+                if (userRole === 'admin') {
+                    // Lógica para el inicio de sesión del administrador
+                    res.redirect('/administracion');
                 } else {
-                    console.log("Usuario no encontrado");
-                    res.status(401).send("No se ha podido autenticar el usuario - Usuario no encontrado");
+                    // Verificación de la contraseña para roles diferentes a 'admin'
+                    bcrypt.compare(password, hashedPasswordFromDB, (compareErr, result) => {
+                        if (compareErr) {
+                            console.log("Error al comparar contraseñas: " + compareErr);
+                            res.status(500).send("Error en el inicio de sesión");
+                        } else {
+                            if (result) {
+                                // Acciones para otros roles o cualquier lógica adicional
+                                res.sendFile(path.join(__dirname, 'App_web', 'UserWeb', 'index.html'));
+                                app.use(express.static(path.join(__dirname, 'App_web', 'UserWeb')));
+                                const filePath = path.join(__dirname, 'UserWeb', 'wol.ps1');
+                            } else {
+                                console.log("Contraseña incorrecta");
+                                res.status(401).send("No se ha podido autenticar el usuario - Contraseña incorrecta");
+                            }
+                        }
+                    });
                 }
             } else {
-                console.log("Error en el inicio de sesión: " + err);
-                res.status(500).send("Error en el inicio de sesión");
+                console.log("Usuario no encontrado");
+                res.status(401).send("No se ha podido autenticar el usuario - Usuario no encontrado");
             }
-        });
+        } else {
+            console.log("Error en el inicio de sesión: " + err);
+            res.status(500).send("Error en el inicio de sesión");
+        }
     });
 });
 
@@ -152,36 +151,56 @@ app.get('/cambiarcontrasena', (req, res) => {
     res.sendFile(path.join(__dirname, 'App_web','Change', 'changepasswd.html'));
 });
 
-app.post('/cambiarcontrasena', (req, res) => {
+app.post('/cambiarcontrasena', async (req, res) => {
     const usuario = req.body.usuario;
     const nuevaContraseña = req.body.nuevaContraseña;
 
-    mysqlPool.getConnection((err, connection) => {
-        if (err) {
-            console.log('Error al obtener la conexión de la pool: ' + err);
-            res.status(500).send("Error al cambiar la contraseña");
-            return;
-        }
+    // Verificar si el usuario existe
+    const checkUserSql = 'SELECT COUNT(*) as count FROM credenciales WHERE usuario = ?';
 
-        bcrypt.hash(nuevaContraseña, saltRounds, (hashErr, nuevoHash) => {
-            if (hashErr) {
-                console.log("Error al hashear la nueva contraseña: " + hashErr);
-                res.status(500).send("Error al cambiar la contraseña");
-            } else {
-                const updateSql = 'UPDATE credenciales SET hash = ? WHERE usuario = ?';
-                connection.query(updateSql, [nuevoHash, usuario], (updateErr) => {
-                    connection.release();
-                    if (updateErr) {
-                        console.log("Error al actualizar la contraseña: " + updateErr);
-                        res.status(500).send("Error al cambiar la contraseña");
-                    } else {
-                        console.log("Contraseña cambiada exitosamente");
-                        res.status(200).send("Contraseña cambiada exitosamente");
-                        res.sendFile(path.join(__dirname + '/App_web','/Login','/form.html'))
-                    }
-                });
+    mysqlConnection.query(checkUserSql, [usuario], async (checkErr, checkResult) => {
+        if (!checkErr) {
+            const userCount = checkResult[0].count;
+
+            if (userCount === 0) {
+                // El usuario no existe, enviar mensaje de error
+                console.log("Error al cambiar la contraseña");
+                            res.status(500).send(`
+                                <script>
+                                    alert('ERROR: ¡El usuario no existe!');
+                                    window.history.back();
+                                </script>
+                            `);
             }
-        });
+
+            // El usuario existe, proceder con el cambio de contraseña
+            bcrypt.hash(nuevaContraseña, saltRounds, (hashErr, nuevoHash) => {
+                if (hashErr) {
+                    console.log("Error al hashear la nueva contraseña: " + hashErr);
+                    res.status(500).send("Error al cambiar la contraseña");
+                } else {
+                    const updateSql = 'UPDATE credenciales SET hash = ? WHERE usuario = ?';
+                    mysqlConnection.query(updateSql, [nuevoHash, usuario], (updateErr) => {
+                        if (updateErr) {
+                            console.log("Error al actualizar la contraseña: " + updateErr);
+                            res.status(500).send("Error al cambiar la contraseña");
+                        } else {
+                            // Contraseña cambiada exitosamente, enviar respuesta al cliente
+                            console.log("Exito al cambiar la contraseña");
+                            res.status(500).send(`
+                                <script>
+                                    alert('¡La contraseña se ha cambiado con exito!');
+                                    window.history.back();
+                                </script>
+                            `);
+                        }
+                    });
+                }
+            });
+        } else {
+            console.log("Error al verificar usuario: " + checkErr);
+            res.status(500).send("Error al verificar usuario");
+        }
     });
 });
 
@@ -194,39 +213,98 @@ app.post('/crearusuario', async (req, res) => {
     const usuario = req.body.nombre;
     const contraseña = req.body.password;
 
-    mysqlPool.getConnection(async (err, connection) => {
-        if (err) {
-            console.log('Error al obtener la conexión de la pool: ' + err);
-            res.status(500).send("Error al crear usuario");
-            return;
+    // Hasheo de la contraseña antes de almacenarla
+    const hashedPassword = await hashPassword(contraseña);
+
+    // Verificar si el usuario ya existe
+    const checkUserSql = 'SELECT COUNT(*) as count FROM credenciales WHERE usuario = ?';
+
+    mysqlConnection.query(checkUserSql, [usuario], async (checkErr, checkResult) => {
+        if (!checkErr) {
+            const userCount = checkResult[0].count;
+
+            if (userCount > 0) {
+                // El usuario ya existe, enviar mensaje de error
+                console.log("El nombre de usuario ya existe");
+                res.status(400).send(`
+                    <script>
+                        alert('El nombre de usuario ya existe');
+                        window.history.back();
+                    </script>
+                `);
+            } else {
+                // El usuario no existe, proceder con la inserción
+                const insertSql = 'INSERT INTO credenciales (usuario, hash) VALUES (?, ?)';
+                mysqlConnection.query(insertSql, [usuario, hashedPassword], (insertErr, insertResult) => {
+                    if (!insertErr) {
+                        console.log("Usuario creado con éxito");
+                        res.status(500).send(`
+                            <script>
+                                alert('¡El usuario se ha creado con EXITO!');
+                                window.history.back();
+                            </script>
+                        `);
+                    } else {
+                        console.log("Error al crear usuario: " + insertErr);
+                        res.status(500).send(`
+                            <script>
+                                alert('¡El usuario YA EXISTE! ${insertErr}');
+                                window.history.back();
+                            </script>
+                        `);
+                    }
+                });
+            }
+        } else {
+            console.log("Error al verificar usuario: " + checkErr);
+            res.status(500).send(`
+                <script>
+                    alert('Error al verificar usuario: ${checkErr}');
+                    window.history.back();
+                </script>
+            `);
+        }
+    });
+});
+
+// Ruta para asignar equipos
+app.get('/asignarequipo', (req, res) => {
+    res.sendFile(path.join(__dirname, 'App_web', 'Equipos', 'index.html'));
+});
+// Agrega la lógica para manejar la asignación de equipos
+app.post('/asignarequipo', (req, res) => {
+    const usuario = req.body.usuario;
+    const ip = req.body.ip;
+
+    // Verifica que el usuario exista en la base de datos
+    const selectUserSql = 'SELECT * FROM credenciales WHERE usuario = ?';
+    mysqlConnection.query(selectUserSql, [usuario], (selectUserErr, userRows) => {
+        if (selectUserErr) {
+            console.error('Error al buscar el usuario:', selectUserErr);
+            return res.status(500).json({ error: 'Error al asignar el equipo al usuario.' });
         }
 
-        // Hasheo de la contraseña antes de almacenarla
-        const hashedPassword = await hashPassword(contraseña);
+        if (userRows.length === 0) {
+            return res.status(404).json({ error: 'Usuario no encontrado.' });
+        }
 
-        const sql = 'INSERT INTO credenciales (usuario, hash) VALUES (?, ?)';
-        connection.query(sql, [usuario, hashedPassword], (err, result) => {
-            connection.release();
-            if (!err) {
-                console.log("Usuario creado con éxito");
-                res.send("Usuario creado con éxito");
-            } else {
-                console.log("Error al crear usuario: " + err);
-                res.status(500).send("Error al crear usuario");
+        const userId = userRows[0].id; // Suponiendo que hay un campo 'id' en la tabla 'credenciales'
+
+        // Realiza la inserción en la tabla 'equipos'
+        const insertEquipoSql = 'INSERT INTO equipos (usuario_id, ip) VALUES (?, ?)';
+        mysqlConnection.query(insertEquipoSql, [userId, ip], (insertEquipoErr) => {
+            if (insertEquipoErr) {
+                console.error('Error al asignar el equipo al usuario:', insertEquipoErr);
+                return res.status(500).json({ error: 'Error al asignar el equipo al usuario.' });
             }
+
+            // Envía una respuesta exitosa al cliente
+            res.json({ success: true });
         });
     });
+});
 
-    const hashPassword = (hash) => {
-        return new Promise((resolve, reject) => {
-            bcrypt.hash(hash, saltRounds, (err, hash) => {
-                if (err) {
-                    console.log("Error al hashear la contraseña: " + err);
-                    reject(err);
-                } else {
-                    resolve(hash);
-                }
-            });
-        });
-    };
+// Visualizar los usuarios de la bd en la web para manejarlos más sencillo:
+app.get('/allusers', (req, res) => {
+    res.sendFile(path.join(__dirname, 'App_web', 'AllUsers', 'index.html'));
 });

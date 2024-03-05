@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignar Equipo</title>
+    <style>
+    body {
+        background-color: #1a1a1a;
+        color: #ffffff;
+        font-family: 'Courier New', monospace;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+    
+    form {
+        background-color: #333;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        width: 300px; /* Ajusta el ancho según tus necesidades */
+    }
+    
+    label, input {
+        display: block;
+        margin-bottom: 10px;
+        color: #ffffff; /* Color del texto */
+    }
+    
+    input[type="text"],
+    input[type="password"],
+    input[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        border: 1px solid #555; /* Borde del input */
+        background-color: #444; /* Fondo del input */
+        color: #ffffff; /* Color del texto del input */
+    }
+    
+    button {
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        border: none;
+        background-color: #4caf50;
+        color: #fff;
+        cursor: pointer;
+    }
+    
+    button:hover {
+        background-color: #45a049;
+    }
+    input[type="button"] {
+        background-color: #4b4b4b;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    input[type="button"]:hover {
+        background-color: #353535;
+    }
+    input {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="submit"],
+    input[type="button"] {
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        margin-top: 13px;
+    }
+</style>
+    
+</head>
+<script type="module">
+    // Función para asignar equipos
+    async function asignarEquipo() {
+        const usuario = document.getElementById('usuario').value;
+        const ip = document.getElementById('ip').value;
+
+        try {
+            const response = await fetch('/asignarequipo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ usuario, ip }),
+            });
+
+            if (response.ok) {
+                // Maneja la respuesta exitosa (puedes mostrar un mensaje, etc.)
+                console.log('Equipo asignado correctamente.');
+            } else {
+                // Maneja el caso en que la respuesta no sea exitosa
+                console.error('Error al asignar el equipo:', response.status);
+            }
+        } catch (error) {
+            // Maneja errores de red u otros errores
+            console.error('Error de red:', error);
+        }
+    }
+</script>
+<body>
+<form id="equipoForm">
+    <label for="usuario">Nombre de usuario:</label>
+    <input type="text" id="usuario" name="usuario" required>
+    <label for="ip">Asignar IP:</label>
+    <input type="text" id="ip" name="ip" required>
+    <button type="button" onclick="asignarEquipo()">Añadir equipo al usuario</button>
+    <input type="button" value="Volver" onclick="history.back()">
+</form>
+</body>
+</html>

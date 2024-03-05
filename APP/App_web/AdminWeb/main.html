@@ -4,19 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administracion | MainPage</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" type="text/css" href="style_admin.css">
 </head>
+</style>
 <body>
     <div class="menu">
-        <h1>Bienvenido</h1>
-        <ul>
-            <li><a href="/crearusuario"><img src="img/addusers.png" alt="App Web">Añadir usuarios</a></li>
-            <hr>
-            <li><a href="/cambiarcontrasena"><img src="img/resetpass.png" alt="Otra Web">Cambiar contraseña</a></li>
-            <hr>
-            <li><a href="/verusuario"><img src="img/allusers.png" alt="Otra Web">Ver usuarios</a></li>
-            <hr>
-        </ul>
+        <section class="menu-curva">
+            <h1>Admin´s Zone</h1>
+        </section>
+        <div class="grid-container">
+            <div class="grid-item sec1">
+                <a href="/crearusuario">
+                    <img src="img/addusers.png" alt="App Web">
+                    <p><b>Añadir usuario</b></p>
+                </a>
+            </div>
+            <div class="grid-item sec4">
+                <a href="/asignarequipo">
+                    <img src="img/addsystem.png" alt="Añadir equipo">
+                    <p><b>Asignar equipo</b></p>
+                </a>
+            </div>
+            <div class="grid-item sec2">
+                <a href="/cambiarcontrasena">
+                    <img src="img/resetpass.png" alt="Otra Web">
+                    <p><b>Cambiar contraseña</b></p>
+                </a>
+            </div>
+            <div class="grid-item sec3">
+                <a href="/allusers">
+                    <img src="img/allusers.png" alt="Otra Web">
+                    <p><b>Ver usuarios</b></p>
+                </a>
+            </div>
+        </div>
     </div>
     <div class="contenido">
 

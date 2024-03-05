@@ -52,7 +52,28 @@
         input[type="submit"]:hover {
             background-color: #45a049;
         }
-    </style>
+        input[type="button"] {
+            background-color: #4b4b4b;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        input[type="button"]:hover {
+            background-color: #353535;
+        }
+        input {
+        display: block;
+        margin-bottom: 10px;
+        }
+        input[type="text"],
+        input[type="password"],
+        input[type="submit"],
+        input[type="button"] {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+</style>
 </head>
 <body>
     <form action="/cambiarcontrasena" method="post">
@@ -64,6 +85,7 @@
         <button type="button" class="toggle-password" onclick="togglePasswordVisibility('nuevaContraseña')">Mostrar Contraseña</button>
         <br><br>
         <input type="submit" value="Cambiar Contraseña">
+        <input type="button" value="Volver" onclick="history.back()">
     </form>
     <script>
         function togglePasswordVisibility(inputId) {
