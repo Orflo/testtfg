@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de usuario</title>
+    <link rel="stylesheet" href="style_user.css">
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        const botones = document.querySelectorAll('.button-styled');
+        
+        botones.forEach((boton) => {
+            boton.addEventListener('click', () => {
+                const direccionIP = boton.innerText.split('\n')[1].trim(); // Extrae la dirección IP del texto del botón
+                fetch(`/wake?ip=${direccionIP}`)
+                    .then(response => {
+                        if (response.ok) {
+                            console.log(`Señal WOL enviada correctamente a ${direccionIP}`);
+                        } else {
+                            console.log(`Error al enviar la señal WOL a ${direccionIP}`);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+        });
+    });
+        // Cambia entre el tema blanco y el negro.
+        document.addEventListener("DOMContentLoaded", function() {
+            const body = document.body;
+            const toggleButton = document.getElementById('toggleButton');
+
+            toggleButton.addEventListener('click', function() {
+                body.classList.toggle('white-theme');
+            });
+        });
+        // Pantalla de de carga y bienvida del usuario:
+        document.addEventListener("DOMContentLoaded", function() {
+        const loadingScreen = document.querySelector('.loading-screen');
+        loadingScreen.addEventListener('transitionend', function() {
+        // Oculta la pantalla de carga después de la transición
+        loadingScreen.style.display = 'none';
+        });
+        setTimeout(function() {
+            loadingScreen.style.opacity = 0;
+        }, 2000);
+    });
+
+    // Lista de tareas y js dedicado a ello: 
+    document.addEventListener("DOMContentLoaded", function() {
+    const newTaskInput = document.getElementById('newTaskInput');
+    const addTaskButton = document.getElementById('addTaskButton');
+    const taskList = document.getElementById('taskList');
+
+    addTaskButton.addEventListener('click', function() {
+        const taskText = newTaskInput.value.trim();
+        if (taskText !== '') {
+            addTask(taskText);
+            newTaskInput.value = '';
+        }
+    });
+
+    function addTask(taskText) {
+        const taskItem = document.createElement('li');
+        const taskDiv = document.createElement('div');
+        const taskTextSpan = document.createElement('span');
+        const completeButton = document.createElement('button');
+        const deleteButton = document.createElement('button');
+
+        taskTextSpan.textContent = taskText;
+        completeButton.textContent = 'Completado';
+        deleteButton.textContent = 'Eliminar';
+
+        taskDiv.classList.add('task-item');
+        completeButton.classList.add('complete-button');
+        deleteButton.classList.add('delete-button');
+
+        taskDiv.appendChild(taskTextSpan);
+        taskDiv.appendChild(completeButton);
+        taskDiv.appendChild(deleteButton);
+
+        taskItem.appendChild(taskDiv);
+        taskList.appendChild(taskItem);
+
+        // Eventos para los botones
+        completeButton.addEventListener('click', function() {
+            taskDiv.classList.toggle('completed');
+        });
+
+        deleteButton.addEventListener('click', function() {
+            taskItem.remove();
+        });
+    }
+});
+    
+        document.addEventListener("DOMContentLoaded", function () {
+            // Puedes hacer una solicitud fetch para obtener la información de los equipos asignados
+            // y luego crear dinámicamente los botones en la sección izq-side-box
+            // Ejemplo: fetch('/equiposasignados')
+            //           .then(response => response.json())
+            //           .then(data => {
+            //               // Crear botones según la información recibida
+            //           });
+
+            // Ejemplo de botón estático
+            const buttonIgnacio = document.createElement('button');
+            buttonIgnacio.type = 'button';
+            buttonIgnacio.className = 'button-styled';
+            buttonIgnacio.innerText = 'Mi ordenador: \n192.168.0.11';
+
+            // Agrega un evento al botón para enviar la señal WOL
+            buttonIgnacio.addEventListener('click', () => {
+                fetch('/wake?ip=192.168.0.11')
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Señal WOL enviada correctamente a 192.168.0.11');
+                        } else {
+                            console.log('Error al enviar la señal WOL a 192.168.0.11');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+
+            // Agrega el botón a la sección izq-side-box
+            document.querySelector('.izq-side-box').appendChild(buttonIgnacio);
+        });
+
+    </script>
+</head>
+<body>
+    <div class="loading-screen">
+        <div class="loading-text">¡Bienvenido de nuevo!</div>
+    </div>
+    <div class="all-box">
+        <div class="izq-side-box">
+            <!-- Aquí se agregarán dinámicamente las IPs NO PONER NADA -->
+        </div>
+        <div class="der-side-box">
+            <button id="toggleButton">Cambiar Tema</button>
+            <h1>¡Bienvenido!</h1>
+            <p>Número de teléfono: 608 73 78 25</p>
+            <p>Horario disponible: Lunes a Viernes, 9:00 AM - 5:00 PM</p>
+            <p>Donde vives: Madrid, España.</p>
+            <p>Puesto de trabajo: Administrador de Sistemas</p>
+            <div class="task-app">
+                <h1>Lista de Tareas</h1>
+                <input type="text" id="newTaskInput" placeholder="Nueva tarea...">
+                <button id="addTaskButton">Agregar</button>
+                <ul id="taskList">
+                    <!-- Aquí se agregarán dinámicamente las tareas NO PONER NADA -->
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
