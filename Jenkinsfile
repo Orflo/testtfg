@@ -8,6 +8,8 @@ pipeline {
         stage('Build') {
             steps {
                 git branch: 'main', url: 'https://github.com/Orflo/testtfg.git'
+                sh 'pwd'
+                sh 'ls -la'
                 sh 'npm install'
                 sh 'npm update'
             }
