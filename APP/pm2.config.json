@@ -1,0 +1,8 @@
+{
+    "apps":[
+        {
+            "name": "APPWOL",
+            "script": "APP/app.js"
+        }
+    ]
+}

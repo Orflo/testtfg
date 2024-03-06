@@ -8,6 +8,11 @@ pipeline {
         stage('Build') {
             steps {
                 git branch: 'main', url: 'https://github.com/Orflo/testtfg.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
                 sh 'pwd'
                 sh 'ls -la'
                 sh 'npm install'
@@ -15,9 +20,15 @@ pipeline {
             }
         }
 
+        stage('Install pm2') {
+            steps {
+                sh 'npm install pm2@latest -g'
+            }
+        }
+
         stage('deploy') {
             steps {
-                sh 'npm start'
+                sh 'pm2 startOrRestart pm2.config.json'
             }        
         }  
     }
