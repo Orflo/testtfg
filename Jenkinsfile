@@ -28,6 +28,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
+                sh 'pm2 start pm2.config.json'
                 sh 'pm2 startOrRestart pm2.config.json'
             }        
         }  
