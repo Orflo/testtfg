@@ -2,7 +2,8 @@
     "apps":[
         {
             "name": "APPWOL",
-            "script": "APP/app.js"
+            "script": "APP/app.js",
+            "watch": true
         }
     ]
 }
