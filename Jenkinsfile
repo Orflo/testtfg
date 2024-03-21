@@ -20,11 +20,11 @@ pipeline {
             }
         }
 
-        stage('Install pm2') {
-            steps {
-                sh 'npm install pm2@latest -g'
-            }
-        }
+//        stage('Install pm2') {
+//            steps {
+//                sh 'npm install pm2@latest -g'
+//            }
+//        }
 
         stage('Deploy') {
             steps {
