@@ -79,3 +79,16 @@ Se realiza una nueva zona en la pag de administración donde con el nombre de us
 ## 24.02.2024
 Se crea allusers y se deja en desarollo. Moficiación y organización de adminweb, se crean tambien botones para volver en cada zona de administración además de cambiar el código para verificacion de usuarios y control de errores.
 - Aun queda por revisar magic packet, restringir webs y sigue sin leer el js en asignar equipos.
+
+## 31.03.2024
+- Se modifica completamente el directorio AllUsers de forma que se pueda administrar perfectamente los usuarios activos creados.
+- Se modifica la tabla credenciales y se crea un nuevo campo llamado IP. 
+- Se elimina la tabla equipos de la BD y se modifica el fichero bd_estructure.md
+- Se elimina asignar equipos ya que no hace falta al poder asignar IP al crear el usuario.
+- Se añade y cambia el apartado 'Modificar informacion' donde se administra de mejor manera la contraseña del usuario además de la dir IP asignada.
+- Se modifica 'Añadir usuario' con la opción de poder o no asignar la dirección IP.
+
+## 01.04.2024
+- Se realizan cambios en la página de administración.
+- Se añade la funcionalidad de cambiar IP, cambiar contraseña y añadir usuarios correctamente.
+- Se soluciona el problema de login al iniciar sesión como administrador.
