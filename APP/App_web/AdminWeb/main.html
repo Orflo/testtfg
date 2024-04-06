@@ -5,42 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administracion | MainPage</title>
     <link rel="stylesheet" type="text/css" href="style_admin.css">
+    <script src="./main_admin.js"></script>
 </head>
-</style>
 <body>
-    <div class="menu">
-        <section class="menu-curva">
-            <h1>Admin´s Zone</h1>
-        </section>
-        <div class="grid-container">
-            <div class="grid-item sec1">
-                <a href="/crearusuario">
-                    <img src="img/addusers.png" alt="App Web">
-                    <p><b>Añadir usuario</b></p>
-                </a>
+    <h1>Zona administrativa</h1>
+    <div class="wrapper">
+        <div class="contenedor">
+            <div class="busqueda-container">
+                <input type="text" id="nombreBusqueda" placeholder="Buscar por nombre...">
+                <button class="btn" onclick="buscarPorNombre()">Buscar</button>
+                <button class="btn btn-danger" onclick="deshacerFiltro()"><img class="img-btn-danger" src="./img/simbolo-de-recarga.png" alt=""></button>
+                <a href="/crearusuario" class="btn btn-add"><b>+</b></a>
             </div>
-            <div class="grid-item sec4">
-                <a href="/asignarequipo">
-                    <img src="img/addsystem.png" alt="Añadir equipo">
-                    <p><b>Asignar equipo</b></p>
-                </a>
-            </div>
-            <div class="grid-item sec2">
-                <a href="/cambiarcontrasena">
-                    <img src="img/resetpass.png" alt="Otra Web">
-                    <p><b>Cambiar contraseña</b></p>
-                </a>
-            </div>
-            <div class="grid-item sec3">
-                <a href="/allusers">
-                    <img src="img/allusers.png" alt="Otra Web">
-                    <p><b>Ver usuarios</b></p>
-                </a>
-            </div>
+            <div id="resultado"></div>
+            <hr style="width: 20%;">
+            <input type="button" class="btn" value="Cerrar sesión" onclick="history.back()">
+            <script src="/main.js"></script>
+        </div>
+        <div class="contenedor-forms">
+        <form action="/modificarinfo" method="post">
+            <h1>Contraseñas</h1>
+            <label for="usuario">Usuario:</label>
+            <input type="text" id="usuario" name="usuario" required>
+            <br>
+            <label for="nuevaContraseña">Nueva Contraseña:</label>
+            <input type="password" id="nuevaContraseña" name="nuevaContraseña" required>
+            <button type="button" class="toggle-password" onclick="togglePasswordVisibility('nuevaContraseña')">Mostrar Contraseña</button>
+            <br><br>
+            <input type="submit" value="Cambiar Contraseña">
+        </form>
+        <form action="/cambiarip" method="post">
+            <h1>Direcciones IP</h1>
+            <label for="usuario">Usuario:</label>
+            <input type="text" id="usuario" name="usuario" required>
+            <br>
+            <label for="nuevaIP">Reasignar IP:</label>
+            <input type="text" id="nuevaIP" name="nuevaIP" required>
+            <br><br>
+            <input type="submit" value="Cambiar IP asignada">
+        </form>
         </div>
     </div>
-    <div class="contenido">
-
-    </div>
+    <script>
+        function togglePasswordVisibility(inputId) {
+            var input = document.getElementById(inputId);
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+    </script>
 </body>
 </html>
