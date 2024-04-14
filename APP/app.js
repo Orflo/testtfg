@@ -27,7 +27,7 @@ app.use(session({
 
 // Middleware para la autenticación
 const authAdmin = function(req, res, next) {
-    if (req.session && req.session.user && req.session.rol === 'admin')
+    if (req.session && req.session.user && req.session.rol === 'admin' && req.session.admin)
         return next();
     else
         return res.sendStatus(401);
