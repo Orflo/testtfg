@@ -280,7 +280,7 @@ app.post('/cambiarip', async (req, res) => {
 });
 
 // Creación de usuarios y añadido automático a la BBDD:
-app.get('/crearusuario', function (req, res) {
+app.get('/crearusuario', auth, function (req, res) {
     res.sendFile(path.join(__dirname, 'App_web', 'Create', 'index.html'));
 });
 
