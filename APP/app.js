@@ -25,6 +25,14 @@ app.use(session({
     saveUninitialized: true
   }));
 
+// Middleware para la autenticación
+const auth = function(req, res, next) {
+    if (req.session && req.session.user && req.session.admin)
+        return next();
+    else
+        return res.sendStatus(401);
+};
+
 // Conexión a base de datos:
 const mysqlConnection = mysql.createConnection({
     host: 'localhost',
@@ -55,7 +63,7 @@ const hashPassword = (hash) => {
 };
 
 // Ruta principal
-app.get('/', (req, res) => {
+app.get('/iniciarsesion', (req, res) => {
     res.sendFile(path.join(__dirname, 'App_web', 'Login', 'form.html'));
 });
 
@@ -154,7 +162,7 @@ app.post('/iniciarsesion', function (req, res) {
 // Logout endpoint
 app.get('/logout', function (req, res) {
       req.session.destroy();
-      res.redirect('/');
+      res.redirect('/iniciarsesion');
 });
 
 // Ruta para modificar la información del usuario
@@ -394,11 +402,3 @@ app.get('/buscar-usuario/:nombre', (req, res) => {
         res.json(result);
     });
 });
-
-// Middleware para la autenticación
-const auth = function(req, res, next) {
-    if (req.session && req.session.user && req.session.admin)
-        return next();
-    else
-        return res.sendStatus(401);
-};
