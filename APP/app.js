@@ -26,8 +26,15 @@ app.use(session({
   }));
 
 // Middleware para la autenticación
-const auth = function(req, res, next) {
-    if (req.session && req.session.user && req.session.admin)
+const authAdmin = function(req, res, next) {
+    if (req.session && req.session.user && req.session.rol === 'admin')
+        return next();
+    else
+        return res.sendStatus(401);
+};
+
+const authUser = function(req, res, next) {
+    if (req.session && req.session.user && req.session.rol === 'user')
         return next();
     else
         return res.sendStatus(401);
@@ -73,12 +80,12 @@ app.get('/iniciarsesion', (req, res) => {
 });
 
 // Ruta de administración
-app.get('/administracion', auth, function (req, res){
+app.get('/administracion', authAdmin, function (req, res){
     res.sendFile(path.join(__dirname, 'App_web', 'AdminWeb', 'main.html'));
 });
 
 // Ruta de usuarios
-app.get('/userpanel', auth, function (req, res) {
+app.get('/userpanel', authUser, function (req, res) {
     res.sendFile(path.join(__dirname, 'App_web', 'UserWeb', 'index.html'));
 });
 
@@ -145,8 +152,13 @@ app.post('/iniciarsesion', function (req, res) {
                     } else {
                         if (result) {
                             req.session.user = usuario;
-                            req.session.admin = (userRole === 'admin');
-                            res.redirect('/administracion');
+                            req.session.rol = userRole;
+                            if (userRole === 'admin') {
+                                req.session.admin = true;
+                                res.redirect('/administracion');
+                            } else {
+                                res.redirect('/userpanel');
+                            }
                         } else {
                             console.log("Contraseña incorrecta");
                             res.status(401).send("No se ha podido autenticar el usuario - Contraseña incorrecta");
@@ -171,7 +183,7 @@ app.get('/logout', function (req, res) {
 });
 
 // Ruta para modificar la información del usuario
-app.get('/modificarinfo', auth, (req, res) => {
+app.get('/modificarinfo', authAdmin, (req, res) => {
     res.sendFile(path.join(__dirname, 'App_web', 'AdminWeb', 'main.html'));
 });
 
@@ -229,7 +241,7 @@ app.post('/modificarinfo', async (req, res) => {
 });
 
 // Ruta para cambiar la IP del usuario
-app.get('/cambiarip', auth, (req, res) => {
+app.get('/cambiarip', authAdmin, (req, res) => {
     res.sendFile(path.join(__dirname, 'App_web', 'AdminWeb', 'main.html'));
 });
 
@@ -280,7 +292,7 @@ app.post('/cambiarip', async (req, res) => {
 });
 
 // Creación de usuarios y añadido automático a la BBDD:
-app.get('/crearusuario', auth, function (req, res) {
+app.get('/crearusuario', authAdmin, function (req, res) {
     res.sendFile(path.join(__dirname, 'App_web', 'Create', 'index.html'));
 });
 
