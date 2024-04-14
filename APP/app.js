@@ -25,14 +25,6 @@ app.use(session({
     saveUninitialized: true
   }));
 
-// Middleware para la autenticación
-const auth = function(req, res, next) {
-    if (req.session && req.session.user && req.session.admin)
-        return next();
-    else
-        return res.sendStatus(401);
-};
-
 // Conexión a base de datos:
 const mysqlConnection = mysql.createConnection({
     host: 'localhost',
@@ -402,3 +394,11 @@ app.get('/buscar-usuario/:nombre', (req, res) => {
         res.json(result);
     });
 });
+
+// Middleware para la autenticación
+const auth = function(req, res, next) {
+    if (req.session && req.session.user && req.session.admin)
+        return next();
+    else
+        return res.sendStatus(401);
+};
