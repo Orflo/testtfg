@@ -63,6 +63,11 @@ const hashPassword = (hash) => {
 };
 
 // Ruta principal
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'App_web', 'Login', 'form.html'));
+});
+
+//Ruta login
 app.get('/iniciarsesion', (req, res) => {
     res.sendFile(path.join(__dirname, 'App_web', 'Login', 'form.html'));
 });
