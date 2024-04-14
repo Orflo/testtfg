@@ -171,7 +171,7 @@ app.get('/logout', function (req, res) {
 });
 
 // Ruta para modificar la información del usuario
-app.get('/modificarinfo', (req, res) => {
+app.get('/modificarinfo', auth, (req, res) => {
     res.sendFile(path.join(__dirname, 'App_web', 'AdminWeb', 'main.html'));
 });
 
@@ -229,7 +229,7 @@ app.post('/modificarinfo', async (req, res) => {
 });
 
 // Ruta para cambiar la IP del usuario
-app.get('/cambiarip', (req, res) => {
+app.get('/cambiarip', auth, (req, res) => {
     res.sendFile(path.join(__dirname, 'App_web', 'AdminWeb', 'main.html'));
 });
 
