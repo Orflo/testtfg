@@ -5,17 +5,33 @@ const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const saltRounds = 10; // Número de rondas de salting
 const { exec } = require('child_process');
+const session = require('express-session');
 
 // SERVIDOR CON EXPRESS
 const express = require('express');
+const app = express();
 const PORT = 3000;
-var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.listen(PORT, () => {
     console.log(`Servidor iniciado en el puerto ${PORT}`);
 });
+
+//Session configuration
+app.use(session({
+    secret: '2C44-4D44-WppQ38S',
+    resave: false,
+    saveUninitialized: true
+  }));
+
+// Middleware para la autenticación
+const auth = function(req, res, next) {
+    if (req.session && req.session.user && req.session.admin)
+        return next();
+    else
+        return res.sendStatus(401);
+};
 
 // Conexión a base de datos:
 const mysqlConnection = mysql.createConnection({
@@ -52,12 +68,12 @@ app.get('/', (req, res) => {
 });
 
 // Ruta de administración
-app.get('/administracion', (req, res) => {
+app.get('/administracion', auth, function (req, res){
     res.sendFile(path.join(__dirname, 'App_web', 'AdminWeb', 'main.html'));
 });
 
 // Ruta de usuarios
-app.get('/userpanel', (req, res) => {
+app.get('/userpanel', auth, function (req, res) {
     res.sendFile(path.join(__dirname, 'App_web', 'UserWeb', 'index.html'));
 });
 
@@ -105,8 +121,8 @@ app.get('/ejecutar-script/:nombreOrdenador', function (req, res) {
     });
 });
 
-// LOGIN PRINCIPAL DE USUARIOS
-app.post('/iniciarsesion', (req, res) => {
+// Login endpoint
+app.get('/iniciarsesion', function (req, res) {
     const usuario = req.body.usuario;
     const password = req.body.password;
 
@@ -117,40 +133,21 @@ app.post('/iniciarsesion', (req, res) => {
                 const hashedPasswordFromDB = rows[0].hash;
                 const userRole = rows[0].rol;
 
-                if (userRole === 'admin') {
-                    bcrypt.compare(password, hashedPasswordFromDB, (compareErr, result) => {
-                        if (compareErr) {
-                            console.log("Error al comparar contraseñas: " + compareErr);
-                            res.status(500).send("Error en el inicio de sesión");
+                bcrypt.compare(password, hashedPasswordFromDB, (compareErr, result) => {
+                    if (compareErr) {
+                        console.log("Error al comparar contraseñas: " + compareErr);
+                        res.status(500).send("Error en el inicio de sesión");
+                    } else {
+                        if (result) {
+                            req.session.user = usuario;
+                            req.session.admin = (userRole === 'admin');
+                            res.redirect('/administracion');
                         } else {
-                            if (result) {
-                                // Contraseña correcta para el rol de administrador
-                                res.redirect('/administracion');
-                            } else {
-                                // Contraseña incorrecta para el rol de administrador
-                                console.log("Contraseña incorrecta para el rol de administrador");
-                                res.status(401).send("No se ha podido autenticar el usuario - Contraseña incorrecta");
-                            }
+                            console.log("Contraseña incorrecta");
+                            res.status(401).send("No se ha podido autenticar el usuario - Contraseña incorrecta");
                         }
-                    });
-                } else {
-                    // Verificación de la contraseña para roles diferentes a 'admin'
-                    bcrypt.compare(password, hashedPasswordFromDB, (compareErr, result) => {
-                        if (compareErr) {
-                            console.log("Error al comparar contraseñas: " + compareErr);
-                            res.status(500).send("Error en el inicio de sesión");
-                        } else {
-                            if (result) {
-                                // Acciones para otros roles o cualquier lógica adicional
-                                res.redirect('/userpanel');
-                                app.use(express.static(path.join(__dirname, 'App_web', 'UserWeb')));
-                            } else {
-                                console.log("Contraseña incorrecta");
-                                res.status(401).send("No se ha podido autenticar el usuario - Contraseña incorrecta");
-                            }
-                        }
-                    });
-                }
+                    }
+                });
             } else {
                 console.log("Usuario no encontrado");
                 res.status(401).send("No se ha podido autenticar el usuario - Usuario no encontrado");
@@ -160,6 +157,12 @@ app.post('/iniciarsesion', (req, res) => {
             res.status(500).send("Error en el inicio de sesión");
         }
     });
+});
+  
+// Logout endpoint
+app.get('/logout', function (req, res) {
+      req.session.destroy();
+      res.send("logout success!");
 });
 
 // Ruta para modificar la información del usuario
