@@ -158,7 +158,7 @@ app.get('/iniciarsesion', function (req, res) {
         }
     });
 });
-app.post('/administracion' (req, res));
+app.post('/iniciarsesion' (req, res));
 
 // Logout endpoint
 app.get('/logout', function (req, res) {
