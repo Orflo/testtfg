@@ -122,7 +122,7 @@ app.get('/ejecutar-script/:nombreOrdenador', function (req, res) {
 });
 
 // Login endpoint
-app.get('/iniciarsesion', function (req, res) {
+app.post('/iniciarsesion', function (req, res) {
     const usuario = req.body.usuario;
     const password = req.body.password;
 
@@ -158,7 +158,6 @@ app.get('/iniciarsesion', function (req, res) {
         }
     });
 });
-app.post('/iniciarsesion' (req, res));
 
 // Logout endpoint
 app.get('/logout', function (req, res) {
