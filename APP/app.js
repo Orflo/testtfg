@@ -158,11 +158,12 @@ app.get('/iniciarsesion', function (req, res) {
         }
     });
 });
-  
+app.post('/administracion' (req, res));
+
 // Logout endpoint
 app.get('/logout', function (req, res) {
       req.session.destroy();
-      res.send("logout success!");
+      res.redirect('/');
 });
 
 // Ruta para modificar la información del usuario
