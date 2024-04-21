@@ -118,8 +118,8 @@ app.post('/userpanel', function (req, res) {
                                 req.session.admin = true;
                                 res.redirect('/administracion');
                             } else {
-                                    res.render('index', { mac: userMac, user: usuario});
-                                    app.use(express.static(path.join(__dirname, 'views')));
+                                res.render('index', { mac: userMac, user: usuario});
+                                app.use(express.static(path.join(__dirname, 'APP', 'views')));
                             }
                         } else {
                             console.log("Contraseña incorrecta");
