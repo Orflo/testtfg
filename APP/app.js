@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10; // Número de rondas de salting
 const { exec } = require('child_process');
 const session = require('express-session');
+const ejs = require('ejs')
 
 // SERVIDOR CON EXPRESS
 const express = require('express');
@@ -19,7 +20,7 @@ app.listen(PORT, () => {
 });
 
 // CARGA EL VIEW DEL EJS
-app.set('view engine', 'ejs');
+app.set('view engine', ejs);
 
 //Session configuration
 app.use(session({
