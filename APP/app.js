@@ -20,7 +20,7 @@ app.listen(PORT, () => {
 });
 
 // CARGA EL VIEW DEL EJS
-app.set('view engine', ejs);
+app.set('view engine', 'ejs');
 
 //Session configuration
 app.use(session({
