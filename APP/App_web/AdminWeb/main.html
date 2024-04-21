@@ -19,7 +19,7 @@
             </div>
             <div id="resultado"></div>
             <hr style="width: 20%;">
-            <a href="/logout" class="btn"><b>Cerrar Sesión</b></a>
+            <a href="/logout" class="btn btn-close"><b>Cerrar sesión</b></a>
             <script src="/main.js"></script>
         </div>
         <div class="contenedor-forms">
@@ -34,15 +34,15 @@
             <br><br>
             <input type="submit" value="Cambiar Contraseña">
         </form>
-        <form action="/cambiarip" method="post">
-            <h1>Direcciones IP</h1>
+        <form action="/cambiarmac" method="post">
+            <h1>Direcciones MAC</h1>
             <label for="usuario">Usuario:</label>
             <input type="text" id="usuario" name="usuario" required>
             <br>
-            <label for="nuevaIP">Reasignar IP:</label>
-            <input type="text" id="nuevaIP" name="nuevaIP" required>
+            <label for="nuevaMac">Reasignar MAC:</label>
+            <input type="text" id="nuevaMac" name="nuevaMac" required>
             <br><br>
-            <input type="submit" value="Cambiar IP asignada">
+            <input type="submit" value="Cambiar MAC asignada">
         </form>
         </div>
     </div>

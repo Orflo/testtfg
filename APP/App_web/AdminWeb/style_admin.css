@@ -92,6 +92,14 @@ h1 {
     background-color: #2b8a0e;
 }
 
+.btn-close {
+    background-color: #ff1f01bb;
+    color: rgb(255, 255, 255);
+}
+
+.btn-close:hover {
+    background-color: #960500;
+}
 
 /* Estilos para el contenedor de resultados */
 #resultado {

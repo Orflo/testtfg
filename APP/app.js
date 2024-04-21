@@ -18,6 +18,9 @@ app.listen(PORT, () => {
     console.log(`Servidor iniciado en el puerto ${PORT}`);
 });
 
+// CARGA EL VIEW DEL EJS
+app.set('view engine', 'ejs');
+
 //Session configuration
 app.use(session({
     secret: '2C44-4D44-WppQ38S',
@@ -75,7 +78,7 @@ app.get('/', (req, res) => {
 });
 
 //Ruta login
-app.get('/iniciarsesion', (req, res) => {
+app.get('/userpanel', (req, res) => {
     res.sendFile(path.join(__dirname, 'App_web', 'Login', 'form.html'));
 });
 
@@ -84,57 +87,11 @@ app.get('/administracion', authAdmin, function (req, res){
     res.sendFile(path.join(__dirname, 'App_web', 'AdminWeb', 'main.html'));
 });
 
-// Ruta de usuarios
-app.get('/userpanel', authUser, function (req, res) {
-    res.sendFile(path.join(__dirname, 'App_web', 'UserWeb', 'index.html'));
-});
-
 // Configuración para servir archivos estáticos desde el directorio actual
 app.use(express.static(path.join(__dirname, 'App_web', 'AdminWeb')));
 
-// Ruta para ejecutar el script de PowerShell para Wake on LAN
-app.get('/wake', (req, res) => {
-    const ipAddress = req.query.ip;
-
-    if (!ipAddress) {
-        return res.status(400).send('Dirección IP no proporcionada en los parámetros de la consulta.');
-    }
-
-    const scriptPath = path.join(__dirname, 'wol.ps1');
-    const command = `powershell -File ${scriptPath} ${ipAddress}`;
-
-    exec(command, (error, stdout, stderr) => {
-        if (error) {
-            console.error(`Error al ejecutar el script: ${error}`);
-            res.status(500).send(`Error al enviar la señal WOL a ${ipAddress}`);
-        } else {
-            console.log(`Señal WOL enviada con éxito a ${ipAddress}`);
-            res.status(200).send(`Señal WOL enviada con éxito a ${ipAddress}`);
-            console.log('¡El equipo se encenderá en unos minutos!');
-            console.log('El script está funcionando correctamente');
-        }
-    });
-});
-
-// Ruta para ejecutar el script de PowerShell para Wake on LAN
-app.get('/ejecutar-script/:nombreOrdenador', function (req, res) {
-    const nombreOrdenador = req.params.nombreOrdenador;
-    const comandoPowerShell = `powershell.exe -File ./UserWeb/wol.ps1 -Ordenador ${nombreOrdenador}`;
-
-    exec(comandoPowerShell, (error, stdout, stderr) => {
-        if (error) {
-            console.error(`Error al ejecutar el script PowerShell para ${nombreOrdenador}: ${error.message}`);
-            res.status(500).send(`Error al ejecutar el script PowerShell para ${nombreOrdenador}`);
-            return;
-        }
-
-        console.log(`Script PowerShell para ${nombreOrdenador} ejecutado correctamente: ${stdout}`);
-        res.status(200).send(`Script PowerShell para ${nombreOrdenador} ejecutado correctamente`);
-    });
-});
-
 // Login endpoint
-app.post('/iniciarsesion', function (req, res) {
+app.post('/userpanel', function (req, res) {
     const usuario = req.body.usuario;
     const password = req.body.password;
 
@@ -144,6 +101,7 @@ app.post('/iniciarsesion', function (req, res) {
             if (rows.length > 0) {
                 const hashedPasswordFromDB = rows[0].hash;
                 const userRole = rows[0].rol;
+                const userMac = rows[0].mac;
 
                 bcrypt.compare(password, hashedPasswordFromDB, (compareErr, result) => {
                     if (compareErr) {
@@ -153,11 +111,14 @@ app.post('/iniciarsesion', function (req, res) {
                         if (result) {
                             req.session.user = usuario;
                             req.session.rol = userRole;
+                            req.session.mac = userMac;
+
                             if (userRole === 'admin') {
                                 req.session.admin = true;
                                 res.redirect('/administracion');
                             } else {
-                                res.redirect('/userpanel');
+                                    res.render('index', { mac: userMac, user: usuario});
+                                    app.use(express.static('views'));
                             }
                         } else {
                             console.log("Contraseña incorrecta");
@@ -179,7 +140,7 @@ app.post('/iniciarsesion', function (req, res) {
 // Logout endpoint
 app.get('/logout', function (req, res) {
       req.session.destroy();
-      res.redirect('/iniciarsesion');
+      res.redirect('/');
 });
 
 // Ruta para modificar la información del usuario
@@ -240,14 +201,14 @@ app.post('/modificarinfo', async (req, res) => {
     });
 });
 
-// Ruta para cambiar la IP del usuario
-app.get('/cambiarip', authAdmin, (req, res) => {
+// Ruta para cambiar la MAC del usuario
+app.get('/cambiarmac', authAdmin, (req, res) => {
     res.sendFile(path.join(__dirname, 'App_web', 'AdminWeb', 'main.html'));
 });
 
-app.post('/cambiarip', async (req, res) => {
+app.post('/cambiarmac', async (req, res) => {
     const usuario = req.body.usuario;
-    const nuevaIP = req.body.nuevaIP;
+    const nuevaMac = req.body.nuevaMac;
 
     // Verificar si el usuario existe
     const checkUserSql = 'SELECT COUNT(*) as count FROM credenciales WHERE usuario = ?';
@@ -258,7 +219,7 @@ app.post('/cambiarip', async (req, res) => {
 
             if (userCount === 0) {
                 // El usuario no existe, enviar mensaje de error
-                console.log("Error al cambiar la IP");
+                console.log("Error al cambiar la MAC");
                 res.status(500).send(`
                     <script>
                         alert('ERROR: ¡El usuario no existe!');
@@ -266,18 +227,18 @@ app.post('/cambiarip', async (req, res) => {
                     </script>
                 `);
             } else {
-                // El usuario existe, proceder a cambiar la IP
-                const updateSql = 'UPDATE credenciales SET ip = ? WHERE usuario = ?';
-                mysqlConnection.query(updateSql, [nuevaIP, usuario], (updateErr) => {
+                // El usuario existe, proceder a cambiar la MAC
+                const updateSql = 'UPDATE credenciales SET mac = ? WHERE usuario = ?';
+                mysqlConnection.query(updateSql, [nuevaMac, usuario], (updateErr) => {
                     if (updateErr) {
-                        console.log("Error al actualizar la IP: " + updateErr);
-                        res.status(500).send("Error al cambiar la IP");
+                        console.log("Error al actualizar la MAC: " + updateErr);
+                        res.status(500).send("Error al cambiar la MAC");
                     } else {
-                        // IP cambiada exitosamente, enviar respuesta al cliente
-                        console.log("Éxito al cambiar la IP");
+                        // MAC cambiada exitosamente, enviar respuesta al cliente
+                        console.log("Éxito al cambiar la MAC");
                         res.status(500).send(`
                             <script>
-                                alert('¡La IP se ha cambiado con éxito!');
+                                alert('¡La MAC se ha cambiado con éxito!');
                                 window.history.back();
                             </script>
                         `);
@@ -291,6 +252,25 @@ app.post('/cambiarip', async (req, res) => {
     });
 });
 
+// FUNCIONAMIENTO DEL SCRIPT DE POWERSHELL DESDE EL USUARIO
+
+const scriptPath = path.join(__dirname, 'wol.ps1');
+app.post('/runPowerShellScript', (req, res) => {
+    const macValue = req.body.macValue;
+
+    const command = `powsh -File "${scriptPath}" -macValue "${macValue}"`;
+
+    exec(command, (error, stdout, stderr) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Error al ejecutar el script de PowerShell');
+            return;
+        }
+        console.log(stdout);
+        res.send(stdout); // Enviar respuesta de PowerShell de vuelta al cliente
+    });
+});
+
 // Creación de usuarios y añadido automático a la BBDD:
 app.get('/crearusuario', authAdmin, function (req, res) {
     res.sendFile(path.join(__dirname, 'App_web', 'Create', 'index.html'));
@@ -299,7 +279,7 @@ app.get('/crearusuario', authAdmin, function (req, res) {
 app.post('/crearusuario', async (req, res) => {
     const usuario = req.body.nombre;
     const contraseña = req.body.password;
-    const ip = req.body.ip;
+    const mac = req.body.mac;
 
     // Hasheo de la contraseña antes de almacenarla
     const hashedPassword = await hashPassword(contraseña);
@@ -322,8 +302,8 @@ app.post('/crearusuario', async (req, res) => {
                 `);
             } else {
                 // El usuario no existe, proceder con la inserción
-                const insertSql = 'INSERT INTO credenciales (usuario, hash, ip) VALUES (?, ?, ?)';
-                mysqlConnection.query(insertSql, [usuario, hashedPassword, ip], (insertErr, insertResult) => {
+                const insertSql = 'INSERT INTO credenciales (usuario, hash, mac) VALUES (?, ?, ?)';
+                mysqlConnection.query(insertSql, [usuario, hashedPassword, mac], (insertErr, insertResult) => {
                     if (!insertErr) {
                         console.log("Usuario creado con éxito");
                         res.status(500).send(`

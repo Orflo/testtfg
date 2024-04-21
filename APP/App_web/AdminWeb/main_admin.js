@@ -10,7 +10,7 @@ function mostrarDatos(){
                 <tr>
                     <th>ID</th>
                     <th>Usuario</th>
-                    <th>IP</th>
+                    <th>MAC</th>
                     <th>Eliminar</th>
                 </tr>
             `;
@@ -20,7 +20,7 @@ function mostrarDatos(){
                 row.innerHTML = `
                     <td>${dato.id}</td>
                     <td>${dato.usuario}</td>
-                    <td>${dato.ip || 'N/A'}</td>
+                    <td>${dato.mac || 'N/A'}</td>
                     <td><button class="eliminar-btn" onclick="eliminarUsuario(${dato.id})">Eliminar</button></td>
                 `;
                 table.appendChild(row);
@@ -53,7 +53,7 @@ function buscarPorNombre() {
                 <tr>
                     <th>ID</th>
                     <th>Usuario</th>
-                    <th>IP</th>
+                    <th>MAC</th>
                     <th>Eliminar</th>
                 </tr>
             `;
@@ -63,7 +63,7 @@ function buscarPorNombre() {
                 row.innerHTML = `
                     <td>${dato.id}</td>
                     <td>${dato.usuario}</td>
-                    <td>${dato.ip || 'N/A'}</td>
+                    <td>${dato.mac || 'N/A'}</td>
                     <td><button class="eliminar-btn" onclick="eliminarUsuario(${dato.id})">Eliminar</button></td>
                 `;
                 table.appendChild(row);

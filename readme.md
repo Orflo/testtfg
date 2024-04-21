@@ -92,3 +92,12 @@ Se crea allusers y se deja en desarollo. Moficiación y organización de adminwe
 - Se realizan cambios en la página de administración.
 - Se añade la funcionalidad de cambiar IP, cambiar contraseña y añadir usuarios correctamente.
 - Se soluciona el problema de login al iniciar sesión como administrador.
+
+## 21.04.2024
+Se completa el proyecto.
+
+Que se ha modificado:
+- Plantilla EJS creada con exito para mostrar MACs de manera dínamica en userpanel.
+- Se añade .ps1 para el funcionamiento dínamico de magic packet para iniciar el ordenador a traves de WOL.
+- Restructuración de código no válido y borrado de carpetas y ficheros innecesarios.
+- Se modifica la bd con el atributo mac (antes era IP)
