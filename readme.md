@@ -101,3 +101,4 @@ Que se ha modificado:
 - Se añade .ps1 para el funcionamiento dínamico de magic packet para iniciar el ordenador a traves de WOL.
 - Restructuración de código no válido y borrado de carpetas y ficheros innecesarios.
 - Se modifica la bd con el atributo mac (antes era IP)
+- Pruebas realizadas, todo funciona correctamente
