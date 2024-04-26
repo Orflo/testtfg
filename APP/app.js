@@ -260,7 +260,7 @@ const scriptPath = path.join(__dirname, 'wol.ps1');
 app.post('/runPowerShellScript', (req, res) => {
     const macValue = req.body.macValue;
 
-    const command = `powsh -File "${scriptPath}" -macValue "${macValue}"`;
+    const command = `pwsh -File "${scriptPath}" -macValue "${macValue}"`;
 
     exec(command, (error, stdout, stderr) => {
         if (error) {
