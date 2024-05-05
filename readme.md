@@ -104,4 +104,3 @@ Que se ha modificado:
 - Pruebas realizadas, todo funciona correctamente
 
 ## 05.05.2024
-Prueba de Despliegue de Jenkins con CI/CD Pipeline
