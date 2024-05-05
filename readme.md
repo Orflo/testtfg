@@ -102,3 +102,6 @@ Que se ha modificado:
 - Restructuración de código no válido y borrado de carpetas y ficheros innecesarios.
 - Se modifica la bd con el atributo mac (antes era IP)
 - Pruebas realizadas, todo funciona correctamente
+
+## 05.05.2024
+Prueba de Despliegue de Jenkins con CI/CD Pipeline
